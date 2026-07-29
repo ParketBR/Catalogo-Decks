@@ -80,11 +80,12 @@
   });
 })();
 
-/* Tecnologia — camadas 3D dirigidas por scroll (seção #tech-scroll) */
+/* Tecnologia — a peça engrossa e escurece conforme o scroll (seção #tech-scroll).
+   Não há pilha que se abre: é uma tábua só, do começo ao fim do processo. */
 (function(){
   const sec = document.getElementById('tech-scroll');
   if (!sec) return;
-  const planks = Array.from(sec.querySelectorAll('[data-plank]'));
+  const stage = sec.querySelector('[data-tech-stage]');
   const shadow = sec.querySelector('[data-plank-shadow]');
   const labels = Array.from(sec.querySelectorAll('[data-tech-label]'));
   const clamp = (v) => Math.max(0, Math.min(1, v));
@@ -97,15 +98,15 @@
     if (total <= 0) return;
     const p = clamp(-r.top / total);
     const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-    const spread = window.innerWidth <= 768 ? 62 : 120;
-    const gap = 10 + eased * spread;
-    const n = planks.length;
-    planks.forEach((el, i) => {
-      el.style.transform = `translateZ(${((i - (n - 1) / 2) * gap).toFixed(1)}px)`;
-    });
+    if (stage) {
+      // ~50% mais espessa no fim do processo, como as paredes celulares
+      const base = window.innerWidth <= 768 ? 11 : 18;
+      stage.style.setProperty('--esp', (base * (1 + eased * 0.5)).toFixed(2) + 'px');
+      stage.style.setProperty('--cura', eased.toFixed(3));
+    }
     if (shadow) {
-      shadow.style.transform = `scale(${(1 + eased * 0.25).toFixed(3)})`;
-      shadow.style.opacity = (0.7 - eased * 0.3).toFixed(2);
+      shadow.style.transform = `scale(${(1 + eased * 0.12).toFixed(3)})`;
+      shadow.style.opacity = (0.55 + eased * 0.2).toFixed(2);
     }
     const step = 0.85 / (labels.length + 1);
     labels.forEach((el, i) => {
