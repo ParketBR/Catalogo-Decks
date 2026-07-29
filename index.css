@@ -564,40 +564,131 @@
   background-size: cover;
   background-position: center;
   will-change: transform;
+
+  /* Variação de tom em faixas largas e irregulares — a diferença de densidade
+     entre uma parte e outra da peça. Só isso; a fibra fina fica por conta do
+     ruído do ::before (gradiente repetido nessa escala lê como veludo cotelê). */
+  --fibra:
+    repeating-linear-gradient(181deg, transparent 0 6px, rgba(8, 3, 1, .16) 9px 13px, transparent 18px 31px),
+    repeating-linear-gradient(178deg, transparent 0 17px, rgba(0, 0, 0, .15) 22px 26px, transparent 33px 59px);
+  --fibra-size: auto, auto;
+  --fibra-pos: 0 0, 0 0;
 }
 
-/* base (4ª, mais embaixo) — 3ª textura de madeira */
+/* Fibra: ruído do próprio SVG, esticado no eixo do veio (baseFrequency
+   baixíssima em X e alta em Y = filamentos longos deitados, correndo no
+   comprimento da peça, como a fibra de verdade).
+
+   type='turbulence', não 'fractalNoise': o fractal dá um borrão suave e
+   homogêneo demais; o turbulence tem descontinuidades, que viram veios de
+   espessura desigual. É daí que vem a irregularidade. 6 oitavas espalham o
+   detalhe por mais escalas, afastando ainda mais do padrão uniforme.
+
+   A camada de verniz (plank 3) desliga esses pseudos com content:none lá
+   embaixo — usar :not() aqui somaria especificidade e faria as regras por
+   camada perderem em silêncio. */
+#tech-scroll [data-plank]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='380' height='380'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.006 0.85' numOctaves='6' seed='9'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='380' height='380' filter='url(%23w)'/%3E%3C/svg%3E");
+  background-size: 380px 380px;
+  /* soft-light de propósito: overlay satura e deixa a madeira alaranjada */
+  mix-blend-mode: soft-light;
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* poros e rachaduras: segundo ruído, bem mais grosso e alongado, em multiply */
+#tech-scroll [data-plank]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.003 0.34' numOctaves='5' seed='23'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='.75'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='520' height='520' filter='url(%23p)'/%3E%3C/svg%3E");
+  background-size: 520px 520px;
+  mix-blend-mode: multiply;
+  opacity: .5;
+  pointer-events: none;
+}
+
+/* As três camadas são a MESMA peça em três momentos do processo, como no
+   diagrama de referência: do topo para a base, madeira antes da impregnação
+   (mais clara), impregnada, e depois de curada (mais escura). Mesma textura
+   nas três — o que muda é só o véu de cor por cima e o quanto de fibra
+   aparece. Não há camada de verniz: a modificação atravessa a peça inteira,
+   não é película de superfície. */
+
+/* base — peça curada: o marrom fechado do fim do processo */
 #tech-scroll [data-plank="0"] {
-  background-image: linear-gradient(rgba(22, 13, 7, .30), rgba(22, 13, 7, .30)), url('tecnologia/madeira-03.webp');
-  background-color: #dcc4a6;
-  border: 1px solid rgba(0, 0, 0, .25);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, .35);
+  background-image: var(--fibra),
+    linear-gradient(rgba(26, 12, 5, .52), rgba(26, 12, 5, .52)),
+    url('tecnologia/madeira-01.webp');
+  background-size: var(--fibra-size), auto, 260% auto;
+  background-position: var(--fibra-pos), 0 0, 18% 42%;
+  background-color: #4a2714;
+  border: 1px solid rgba(0, 0, 0, .3);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .4);
 }
 
-/* 3ª textura de madeira */
+/* Cada camada pega um pedaço e uma escala diferente do ruído, senão as três
+   mostram exatamente a mesma fibra e o empilhamento vira camada duplicada.
+   A intensidade cai de baixo para cima: a base está na sombra e aguenta fibra
+   mais marcada; o topo é a face nobre, acabada, e pede mais discrição. */
+#tech-scroll [data-plank="0"]::before {
+  background-size: 520px 520px;
+  background-position: 12% 70%;
+  opacity: 1;
+}
+
+#tech-scroll [data-plank="0"]::after {
+  opacity: .55;
+}
+
+/* meio — peça impregnada: o tom natural da madeira, sem clarear nem escurecer */
 #tech-scroll [data-plank="1"] {
-  background-image: linear-gradient(rgba(22, 13, 7, .32), rgba(22, 13, 7, .32)), url('tecnologia/madeira-02.webp');
-  background-color: #dcc4a6;
+  background-image: var(--fibra),
+    linear-gradient(rgba(30, 16, 8, .06), rgba(30, 16, 8, .06)),
+    url('tecnologia/madeira-01 2.webp');
+  background-size: var(--fibra-size), auto, 210% auto;
+  background-position: var(--fibra-pos), 0 0, 74% 58%;
+  background-color: #8a4a2a;
   border: 1px solid rgba(0, 0, 0, .2);
   box-shadow: 0 2px 0 rgba(0, 0, 0, .3);
 }
 
-/* 1ª camada (topo visível) — madeira nobre (textura escura avermelhada) */
-#tech-scroll [data-plank="2"] {
-  background-image: linear-gradient(rgba(22, 13, 7, .30), rgba(22, 13, 7, .30)), url('tecnologia/madeira-01.webp');
-  background-color: #5a2e1a;
-  border: 1px solid rgba(0, 0, 0, .18);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, .28);
+#tech-scroll [data-plank="1"]::before {
+  background-size: 430px 430px;
+  background-position: 68% 25%;
+  opacity: .92;
 }
 
-/* 4ª camada (vidro / verniz no topo) — película protetora com vidro e brilho */
-#tech-scroll [data-plank="3"] {
-  background: rgba(255, 255, 255, 0.09);
-  /*backdrop-filter:blur(6px) saturate(140%);*/
-  /*-webkit-backdrop-filter:blur(6px) saturate(140%);*/
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
-  border-radius: 2px;
+#tech-scroll [data-plank="1"]::after {
+  opacity: .48;
+}
+
+/* topo — madeira de origem, antes da impregnação: a mais clara das três.
+   O véu é claro e quente (não branco), senão a madeira acinzenta. */
+#tech-scroll [data-plank="2"] {
+  background-image: var(--fibra),
+    linear-gradient(rgba(240, 214, 174, .62), rgba(240, 214, 174, .62)),
+    url('tecnologia/madeira-01.webp');
+  background-size: var(--fibra-size), auto, 170% auto;
+  background-position: var(--fibra-pos), 0 0, 45% 30%;
+  background-color: #cba97c;
+  border: 1px solid rgba(0, 0, 0, .14);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .2);
+}
+
+/* na camada clara o ruído entra mais leve: em multiply forte ele suja o tom
+   pálido e desfaz o degradê claro → escuro */
+#tech-scroll [data-plank="2"]::before {
+  background-size: 340px 340px;
+  background-position: 44% 40%;
+  opacity: .6;
+}
+
+#tech-scroll [data-plank="2"]::after {
+  opacity: .28;
 }
 
 #tech-scroll .tech-plank-shadow {
