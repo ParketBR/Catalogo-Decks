@@ -483,35 +483,40 @@
   }
 }
 
-/* ═══ 02 TECNOLOGIA — camadas 3D dirigidas por scroll ═══ */
-/* z-index acima das seções vizinhas (z:20) para as texturas vazarem
-   por cima da seção de baixo; corte só no eixo horizontal */
+/* ═══ 02 TECNOLOGIA — processo em três etapas (render fotográfico) ═══
+   A tábua NÃO é desenhada. Cada peça é um cuboide real (preserve-3d, três
+   faces visíveis) e cada face recebe a foto de madeira do projeto como
+   textura. Não há gradiente de veio, ruído SVG nem fibra sintética: o que se
+   vê é a madeira fotografada, mapeada na geometria e recolorida etapa a etapa.
+   A mesma foto, na mesma posição, serve às três tábuas — é a mesma peça. */
 #tech-scroll {
-  /* runway do scroll: 3 etapas de texto */
-  height: 300vh;
   position: relative;
-  background: var(--preto);
-  color: var(--branco-95);
+  background: #fff;
+  color: #171310;
   z-index: 21;
+  padding: clamp(4rem, 9vh, 7.5rem) 0 clamp(4.5rem, 10vh, 8rem);
 }
 
-#tech-scroll .tech-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-x: clip;
-  overflow-y: visible;
-  display: flex;
-  flex-direction: column;
+#tech-scroll .proc-inner {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 6vw;
 }
 
-/* Cabeçalho da seção */
-#tech-scroll .tech-head {
-  padding: clamp(2rem, 4vw, 3rem) 6vw 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  z-index: 3;
+/* ── cabeçalho ── */
+#tech-scroll .proc-head {
+  max-width: 46rem;
+  margin-bottom: clamp(2.5rem, 6vh, 5rem);
+}
+
+#tech-scroll .proc-eyebrow {
+  display: block;
+  font-size: var(--text-caption);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #9a6638;
+  margin-bottom: 1.25rem;
 }
 
 #tech-scroll .tech-title {
@@ -520,7 +525,7 @@
   letter-spacing: -.03em;
   line-height: 1.08;
   font-size: clamp(1.5rem, 3.2vw, 2.625rem);
-  color: var(--branco-95);
+  color: #171310;
   max-width: 15em;
 }
 
@@ -528,272 +533,311 @@
   color: #9a6638;
 }
 
-#tech-scroll .tech-hint {
+#tech-scroll .proc-sub {
+  margin: 1.25rem 0 0;
   font-size: var(--text-caption);
-  letter-spacing: .3em;
-  text-transform: uppercase;
-  color: var(--branco-40);
-  white-space: nowrap;
-  padding-top: .5rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(23, 19, 16, .58);
+  max-width: 34em;
 }
 
-/* Palco 3D (pilha de camadas) */
-#tech-scroll .tech-body {
-  flex: 1;
+/* ── diagrama ── */
+#tech-scroll .proc-diagram {
+  position: relative;
 }
 
-#tech-scroll .tech-stage {
+/* mancha orgânica de fundo — só um respiro de cinza atrás do diagrama,
+   como no infográfico de referência */
+#tech-scroll .proc-blob {
   position: absolute;
-  left: clamp(4vw, 10vw, 14vw);
-  top: 50%;
-  transform: translateY(-58%);
-  perspective: 1600px;
-
-  /* --pw/--ph: dimensões da tábua; --esp: espessura, dirigida pelo scroll
-     (o JS interpola de 16px até ~1,5× disso — as paredes celulares acabam o
-     processo cerca de 50% mais espessas). --cura: 0→1, o avanço do processo,
-     usado para escurecer o tom e reforçar a textura. */
-  --pw: min(44vw, 520px);
-  --ph: calc(var(--pw) * 10 / 16);
-  --esp: 16px;
-  --cura: 0;
-
-  width: var(--pw);
-  height: var(--ph);
+  z-index: 0;
+  right: -6%;
+  top: 2%;
+  width: min(64%, 780px);
+  height: 92%;
+  background: #f7f5f2;
+  border-radius: 46% 54% 38% 62% / 55% 42% 58% 45%;
+  pointer-events: none;
 }
 
-#tech-scroll .tech-stack {
-  position: absolute;
-  inset: 0;
-  transform: rotateX(58deg) rotateZ(-38deg);
-  transform-style: preserve-3d;
+/* linha do diagrama: tábua · conector · lente.
+   A coluna elástica é a DO MEIO: assim a tábua fica colada à esquerda e a
+   lente à direita, e o conector cresce entre as duas — sem o vão morto que
+   aparece quando é o palco que estica. */
+#tech-scroll .proc-row {
+  /* --pw vive na linha (e não no palco) porque o conector também precisa
+     dela para casar a altura com a da tábua */
+  --pw: clamp(190px, 30vw, 400px);
+
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(40px, 1fr) auto;
+  align-items: center;
+  gap: 0;
 }
 
-/* A peça é um cuboide de 6 faces: sem isso a espessura não existe de verdade
-   e o engrossar não aparece nas laterais, que é justamente o que se quer ver. */
-#tech-scroll .tech-plank {
+/* ═══ A TÁBUA ═══
+   Cuboide isométrico: rotateZ deita a peça subindo à direita e rotateX abaixa
+   a câmera até a vista 3/4 do infográfico. Três faces bastam — o topo, a
+   lateral longa e o topo de corte à direita são as únicas visíveis nesse
+   ângulo, e as demais só custariam pintura. */
+#tech-scroll .proc-stage {
+  --pd: calc(var(--pw) * .30);
+  /* largura */
+  --pe: calc(var(--pw) * .052);
+  /* espessura */
+
+  position: relative;
+  /* 1.08 dá a folga que a projeção isométrica cobra: a peça deitada ocupa
+     mais que o próprio comprimento na horizontal */
+  width: calc(var(--pw) * 1.08);
+  height: calc(var(--pw) * .52);
+  perspective: 1700px;
+}
+
+/* A peça sobe à direita, então a ponta de corte fica ACIMA do centro do palco
+   — em pw*0,0953 (pw/2·sen24°·cos62°). O translateY devolve essa diferença,
+   deixando a ponta exatamente na linha do meio: é lá que o conector encosta. */
+#tech-scroll .proc-plank {
   position: absolute;
   left: 50%;
   top: 50%;
   width: var(--pw);
-  height: var(--ph);
-  transform: translate(-50%, -50%);
+  height: var(--pd);
   transform-style: preserve-3d;
+  transform: translate(-50%, -50%) translateY(calc(var(--pw) * .0953)) rotateX(62deg) rotateZ(-24deg);
 }
 
-#tech-scroll .tp-face {
+/* --b: quanto de luz a face recebe. O filtro vai na FACE, nunca no pai:
+   filter em elemento com preserve-3d achata o 3D e o cuboide viraria um
+   retângulo plano. --grade é a colorimetria da etapa. */
+#tech-scroll .pf {
   position: absolute;
   left: 50%;
   top: 50%;
-  background-size: cover;
-  background-position: center;
+  background-repeat: no-repeat;
   backface-visibility: hidden;
-  overflow: hidden;
-
-  /* --b é o brilho base da face (quem pega luz, quem está na sombra). O filtro
-     entra em cada face, nunca no pai: filter em elemento com preserve-3d
-     achata o 3D e a peça viraria um retângulo plano. */
   --b: 1;
-  filter: brightness(calc(var(--b) * (1 - .3 * var(--cura))))
-    saturate(calc(1 + .4 * var(--cura)))
-    contrast(calc(1 + .2 * var(--cura)));
-
-  /* véu de cura: entra por cima da textura e fecha o tom no marrom escuro do
-     fim do processo. É cor, não só brilho — brightness sozinho apenas apaga a
-     peça, e o que acontece de verdade é a madeira escurecer de dentro. */
-  --veu: rgba(44, 19, 7, calc(.5 * var(--cura)));
-
-  /* Variação de tom em faixas largas e irregulares — a diferença de densidade
-     entre uma parte e outra da peça. Só isso; a fibra fina fica por conta do
-     ruído do ::before (gradiente repetido nessa escala lê como veludo cotelê). */
-  --fibra:
-    repeating-linear-gradient(181deg, transparent 0 6px, rgba(8, 3, 1, .16) 9px 13px, transparent 18px 31px),
-    repeating-linear-gradient(178deg, transparent 0 17px, rgba(0, 0, 0, .15) 22px 26px, transparent 33px 59px);
-  --fibra-size: auto, auto;
-  --fibra-pos: 0 0, 0 0;
+  filter: var(--grade, none) brightness(var(--b));
 }
 
-/* Fibra: ruído do próprio SVG, esticado no eixo do veio (baseFrequency
-   baixíssima em X e alta em Y = filamentos longos deitados, correndo no
-   comprimento da peça, como a fibra de verdade).
-
-   type='turbulence', não 'fractalNoise': o fractal dá um borrão suave e
-   homogêneo demais; o turbulence tem descontinuidades, que viram veios de
-   espessura desigual. É daí que vem a irregularidade. 6 oitavas espalham o
-   detalhe por mais escalas, afastando ainda mais do padrão uniforme. */
-#tech-scroll .tp-face::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='380' height='380'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.006 0.85' numOctaves='6' seed='9'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='380' height='380' filter='url(%23w)'/%3E%3C/svg%3E");
-  background-size: 380px 380px;
-  /* soft-light de propósito: overlay satura e deixa a madeira alaranjada */
-  mix-blend-mode: soft-light;
-  /* a fibra sobe junto com a cura: a peça termina o processo mais fechada e
-     visivelmente mais texturada do que a madeira de origem */
-  opacity: calc(.55 + .45 * var(--cura));
-  pointer-events: none;
-}
-
-/* poros e rachaduras: segundo ruído, bem mais grosso e alongado, em multiply */
-#tech-scroll .tp-face::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='520'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.003 0.34' numOctaves='5' seed='23'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='.75'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='520' height='520' filter='url(%23p)'/%3E%3C/svg%3E");
-  background-size: 520px 520px;
-  mix-blend-mode: multiply;
-  opacity: calc(.28 + .3 * var(--cura));
-  pointer-events: none;
-}
-
-/* Uma peça só, em quatro momentos do mesmo processo — o que muda com o scroll
-   é a espessura (--esp), o tom e a textura (--cura), não a posição. O véu de
-   cor sai do claro e quente da madeira de origem e vai fechando no marrom da
-   peça curada; a modificação atravessa a peça inteira, não é película. */
-
-/* face de cima: a face nobre, a que se pisa */
-#tech-scroll .tp-top {
+/* face nobre — a foto da madeira, sem nenhuma camada por cima além do véu de
+   cor da etapa e da luz do ambiente */
+#tech-scroll .pf-top {
   width: var(--pw);
-  height: var(--ph);
-  transform: translate(-50%, -50%) translateZ(calc(var(--esp) / 2));
-  background-image: var(--fibra),
-    linear-gradient(var(--veu), var(--veu)),
-    linear-gradient(rgba(240, 214, 174, .58), rgba(240, 214, 174, .58)),
-    url('tecnologia/madeira-01.webp');
-  background-size: var(--fibra-size), auto, auto, 170% auto;
-  background-position: var(--fibra-pos), 0 0, 0 0, 45% 30%;
-  background-color: #cba97c;
-  --b: 1;
-}
-
-#tech-scroll .tp-top::before {
-  background-size: 420px 420px;
-  background-position: 44% 40%;
-}
-
-/* face de baixo: mesma peça, sem luz nenhuma */
-#tech-scroll .tp-bottom {
-  width: var(--pw);
-  height: var(--ph);
-  transform: translate(-50%, -50%) translateZ(calc(var(--esp) / -2)) rotateX(180deg);
-  background-image: var(--fibra),
+  height: var(--pd);
+  transform: translate(-50%, -50%) translateZ(calc(var(--pe) / 2));
+  background-image:
+    var(--sheen, linear-gradient(transparent, transparent)),
     linear-gradient(var(--veu), var(--veu)),
     url('tecnologia/madeira-01.webp');
-  background-size: var(--fibra-size), auto, 170% auto;
-  background-position: var(--fibra-pos), 0 0, 45% 30%;
-  background-color: #8a4a2a;
-  --b: .3;
+  background-size: auto, auto, 165% auto;
+  background-position: 0 0, 0 0, 42% 34%;
 }
 
-/* topos de corte (as pontas): é aqui que a espessura se lê, então ganham o
-   veio em pé — corte transversal, não fibra deitada */
-#tech-scroll .tp-front,
-#tech-scroll .tp-back {
+/* lateral longa — mesma foto, esticada no eixo do veio: a fibra corre no
+   comprimento da peça, como no corte tangencial de verdade */
+#tech-scroll .pf-front {
   width: var(--pw);
-  height: var(--esp);
-  background-image: var(--fibra),
+  height: var(--pe);
+  transform: translate(-50%, -50%) rotateX(-90deg) translateZ(calc(var(--pd) / 2));
+  background-image:
     linear-gradient(var(--veu), var(--veu)),
-    linear-gradient(rgba(60, 30, 14, .3), rgba(60, 30, 14, .3)),
-    url('tecnologia/madeira-02.webp');
-  background-size: var(--fibra-size), auto, auto, auto 320%;
-  background-position: var(--fibra-pos), 0 0, 0 0, 30% 50%;
-  background-color: #9c5a33;
-}
-
-#tech-scroll .tp-front {
-  transform: translate(-50%, -50%) rotateX(-90deg) translateZ(calc(var(--ph) / 2));
-  --b: .74;
-}
-
-#tech-scroll .tp-back {
-  transform: translate(-50%, -50%) rotateX(90deg) translateZ(calc(var(--ph) / 2));
-  --b: .5;
-}
-
-/* laterais longas — a outra vista da espessura */
-#tech-scroll .tp-left,
-#tech-scroll .tp-right {
-  width: var(--esp);
-  height: var(--ph);
-  background-image: var(--fibra),
-    linear-gradient(var(--veu), var(--veu)),
-    linear-gradient(rgba(60, 30, 14, .26), rgba(60, 30, 14, .26)),
     url('tecnologia/madeira-01.webp');
-  background-size: var(--fibra-size), auto, auto, auto 260%;
-  background-position: var(--fibra-pos), 0 0, 0 0, 60% 50%;
-  background-color: #a05e35;
+  background-size: auto, 100% 620%;
+  background-position: 0 0, 30% 46%;
+  --b: .78;
 }
 
-#tech-scroll .tp-left {
-  transform: translate(-50%, -50%) rotateY(-90deg) translateZ(calc(var(--pw) / 2));
-  --b: .56;
-}
-
-#tech-scroll .tp-right {
+/* topo de corte — madeira-03 é a foto de veio em pé do projeto; comprimida na
+   largura vira o corte transversal, que é o que aparece na ponta da peça */
+#tech-scroll .pf-right {
+  width: var(--pe);
+  height: var(--pd);
   transform: translate(-50%, -50%) rotateY(90deg) translateZ(calc(var(--pw) / 2));
-  --b: .68;
+  background-image:
+    linear-gradient(var(--veu), var(--veu)),
+    url('tecnologia/madeira-03.webp');
+  background-size: auto, 340% 100%;
+  background-position: 0 0, 50% 50%;
+  --b: .6;
 }
 
-#tech-scroll .tech-plank-shadow {
+#tech-scroll .proc-shadow {
   position: absolute;
-  left: 8%;
-  right: 8%;
-  bottom: -24%;
-  height: 60px;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, .55) 0%, transparent 70%);
-  filter: blur(10px);
-  will-change: transform, opacity;
+  left: 14%;
+  right: 14%;
+  bottom: 1%;
+  height: 34px;
+  background: radial-gradient(ellipse at center, rgba(40, 24, 10, .34) 0%, transparent 72%);
+  filter: blur(9px);
+  pointer-events: none;
 }
 
-/* Legendas sequenciais (aparecem conforme o scroll) */
-#tech-scroll .tech-labels {
+/* ── ETAPA 1 · antes da impregnação ──
+   Cor natural e aparência seca: a foto é clareada e dessaturada, sem brilho
+   nenhum por cima. Madeira seca não reflete — por isso não há --sheen aqui. */
+#tech-scroll .proc-row--natural {
+  --grade: brightness(1.62) saturate(.3) contrast(.82) sepia(.22);
+  --veu: rgba(233, 214, 181, .42);
+  --lente: brightness(1.5) saturate(.34) contrast(.86) sepia(.2);
+  --parede: rgba(138, 103, 62, .75);
+  --parede-esp: 1.1;
+  --lumen: rgba(252, 246, 231, .5);
+}
+
+/* ── ETAPA 2 · impregnada ──
+   Leve escurecimento e um passo discreto de saturação; o brilho suave e
+   irregular é o líquido ainda na superfície, entrando na fibra. */
+#tech-scroll .proc-row--impregnada {
+  --grade: brightness(1.16) saturate(.9) contrast(.98) sepia(.06);
+  --veu: rgba(120, 62, 20, .16);
+  --sheen: radial-gradient(120% 80% at 26% 16%, rgba(255, 238, 208, .2) 0%, transparent 58%);
+  --lente: brightness(.96) saturate(1.14);
+  --parede: rgba(140, 98, 50, .8);
+  --parede-esp: 1.1;
+  --lumen: rgba(226, 154, 56, .85);
+}
+
+/* ── ETAPA 3 · após cura e secagem ──
+   Tom mais rico e uniforme, com o brilho acetinado do acabamento final. A
+   textura é a mesma foto: nada foi redesenhado, só reclassificado. */
+#tech-scroll .proc-row--curada {
+  --grade: brightness(.66) saturate(1.3) contrast(1.14);
+  --veu: rgba(46, 20, 7, .36);
+  --sheen: linear-gradient(168deg, rgba(255, 236, 206, .16) 0%, transparent 46%);
+  --lente: brightness(.7) saturate(1.26) contrast(1.1);
+  --parede: rgba(84, 42, 15, .92);
+  /* 50% mais espessa que 1.1 — a modificação da parede celular, na medida */
+  --parede-esp: 1.65;
+  --lumen: rgba(142, 74, 32, .9);
+}
+
+/* ── conector fino tábua → lente ──
+   non-scaling-stroke porque o SVG é esticado sem proporção (preserveAspectRatio
+   none): sem isso a linha engrossaria junto com a escala. */
+#tech-scroll .proc-link {
+  width: 100%;
+  height: clamp(116px, 14vw, 180px);
+  overflow: visible;
+}
+
+#tech-scroll .proc-link path {
+  fill: none;
+  stroke: rgba(23, 19, 16, .3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ── lente de aumento ── */
+#tech-scroll .proc-zoom {
+  position: relative;
+  margin: 0;
+}
+
+#tech-scroll .proc-zoom-cap {
   position: absolute;
-  right: 6vw;
-  top: 50%;
-  transform: translateY(-50%);
-  width: min(34vw, 380px);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1rem, 2.4vh, 2rem);
-}
-
-#tech-scroll [data-tech-label] {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity .6s cubic-bezier(.22, .61, .36, 1), transform .6s cubic-bezier(.22, .61, .36, 1);
-  border-top: 1px solid rgba(255, 255, 255, .18);
-  padding-top: 1rem;
-}
-
-#tech-scroll [data-tech-label="2"] {
-  border-top-color: #9a6638;
-}
-
-#tech-scroll .tech-label-head {
-  display: flex;
-  align-items: baseline;
-  gap: .5rem;
-  margin-bottom: .5rem;
-}
-
-#tech-scroll .tech-label-num {
+  left: 0;
+  bottom: calc(100% + .875rem);
+  width: max-content;
   font-size: var(--text-caption);
-  letter-spacing: .2em;
-  color: #9a6638;
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(23, 19, 16, .6);
+  max-width: 15em;
+}
+
+#tech-scroll .proc-lens {
+  position: relative;
+  width: clamp(116px, 14vw, 180px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow:
+    0 20px 44px -20px rgba(46, 26, 10, .45),
+    inset 0 0 0 1px rgba(23, 19, 16, .1);
+}
+
+/* material dentro da lente: a MESMA foto de madeira, em aumento — é daí que
+   vem a cor e a irregularidade do fundo celular, não de um preenchimento */
+#tech-scroll .proc-lens-mat {
+  position: absolute;
+  inset: 0;
+  background: url('tecnologia/madeira-01.webp') 46% 38% / 620% auto;
+  filter: var(--lente, none) blur(1.5px);
+}
+
+#tech-scroll .proc-cells {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* fill/stroke são herdáveis: postos no <use>, descem para o hexágono
+   referenciado. É o único ponto onde a espessura da parede celular muda. */
+#tech-scroll .proc-cells use {
+  fill: var(--lumen);
+  stroke: var(--parede);
+  stroke-width: var(--parede-esp);
+}
+
+/* vidro da lente: reflexo alto à esquerda e vinheta na borda */
+#tech-scroll .proc-lens::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, .34) 0%, transparent 44%),
+    radial-gradient(circle at 50% 50%, transparent 56%, rgba(38, 20, 7, .3) 100%);
+  pointer-events: none;
+}
+
+/* ── passo numerado entre as tábuas ── */
+#tech-scroll .proc-step {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: clamp(.875rem, 2vw, 1.5rem);
+  max-width: 40rem;
+  padding: clamp(1.25rem, 3vh, 2.25rem) 0;
+}
+
+#tech-scroll .proc-step-num {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: #9a6638;
+  color: #fff;
+  font-size: var(--text-caption);
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 
+#tech-scroll .proc-step-num--final {
+  background: none;
+  border: 1px solid rgba(154, 102, 56, .45);
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
 #tech-scroll .tech-label-name {
-  margin: 0;
+  margin: 0 0 .5rem;
   font-size: var(--text-caption);
   letter-spacing: .26em;
   text-transform: uppercase;
   font-weight: 500;
-  color: #fff;
+  color: #171310;
 }
 
-#tech-scroll [data-tech-label="2"] .tech-label-name {
+#tech-scroll .proc-step--final .tech-label-name {
   color: #9a6638;
 }
 
@@ -802,20 +846,59 @@
   font-size: var(--text-caption);
   font-weight: 300;
   line-height: 1.65;
-  color: var(--branco-72);
+  color: rgba(23, 19, 16, .66);
 }
 
-/* ── Tecnologia no mobile: palco centralizado em cima, legendas embaixo ── */
-@media (max-width:768px) {
-  #tech-scroll {
-    height: 260vh;
+/* ícones discretos: traço fino, sem preenchimento */
+#tech-scroll .proc-step-icon svg {
+  width: clamp(34px, 3.4vw, 46px);
+  height: auto;
+  fill: none;
+  stroke: rgba(154, 102, 56, .7);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── reveal suave ── */
+#tech-scroll .proc-row,
+#tech-scroll .proc-step {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .7s cubic-bezier(.22, .61, .36, 1), transform .7s cubic-bezier(.22, .61, .36, 1);
+}
+
+#tech-scroll .proc-row.is-in,
+#tech-scroll .proc-step.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  #tech-scroll .proc-row,
+  #tech-scroll .proc-step {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── tablet: conector encolhe, lente acompanha ── */
+@media (max-width:1024px) {
+  #tech-scroll .proc-blob {
+    width: 74%;
   }
 
-  #tech-scroll .tech-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: .5rem;
-    padding: clamp(1.5rem, 6vw, 2rem) 7vw 0;
+  #tech-scroll .proc-row {
+    grid-template-columns: auto minmax(24px, 1fr) auto;
+  }
+}
+
+/* ── mobile: tábua em cima, lente embaixo, sem conector ── */
+@media (max-width:768px) {
+  #tech-scroll .proc-inner {
+    padding: 0 7vw;
   }
 
   #tech-scroll .tech-title {
@@ -823,114 +906,117 @@
     max-width: none;
   }
 
-  #tech-scroll .tech-hint {
+  #tech-scroll .proc-blob {
     display: none;
   }
 
-  /* palco 3D centralizado no terço superior, menor */
-  #tech-scroll .tech-stage {
-    left: 50%;
-    top: 27%;
-    transform: translate(-50%, -50%);
-    /* a largura da peça vem de --pw (a altura é derivada dela) — mexer só em
-       width deixaria a proporção da tábua errada */
-    --pw: min(56vw, 240px);
+  #tech-scroll .proc-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 1rem;
+    padding: .5rem 0;
   }
 
-  /* legendas: largura cheia, empilhadas no rodapé, mais compactas */
-  #tech-scroll .tech-labels {
-    left: 0;
-    right: auto;
-    top: auto;
-    bottom: clamp(3rem, 10vh, 5rem);
-    transform: none;
+  #tech-scroll .proc-row {
+    --pw: min(74vw, 340px);
+  }
+
+  /* sem conector para casar, a tábua volta ao centro do palco — o
+     translateY do desktop só existe para a ponta encontrar a linha, e aqui
+     deixaria um vão morto acima de cada peça */
+  #tech-scroll .proc-stage {
     width: 100%;
-    padding: 0 7vw;
-    gap: .5rem;
+    height: calc(var(--pw) * .40);
   }
 
-  #tech-scroll [data-tech-label] {
-    padding-top: .5rem;
+  #tech-scroll .proc-plank {
+    transform: translate(-50%, -50%) rotateX(62deg) rotateZ(-24deg);
   }
 
-  #tech-scroll .tech-label-head {
-    gap: .5rem;
-    margin-bottom: .5rem;
+  #tech-scroll .proc-link {
+    display: none;
+  }
+
+  /* empilhado: a legenda volta ao fluxo, acima da lente e centralizada */
+  #tech-scroll .proc-zoom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .75rem;
+  }
+
+  #tech-scroll .proc-zoom-cap {
+    position: static;
+    width: auto;
+    max-width: 22em;
+    text-align: center;
+  }
+
+  #tech-scroll .proc-step {
+    gap: .875rem;
+    padding: clamp(1rem, 2.5vh, 1.5rem) 0;
+  }
+
+  #tech-scroll .proc-step-icon svg {
+    width: 28px;
+  }
+
+  #tech-scroll .proc-step-num {
+    width: 1.875rem;
+    height: 1.875rem;
   }
 
   #tech-scroll .tech-label-name {
     letter-spacing: .16em;
   }
 
+  /* Colapso, não reticências: o texto fica recolhido em duas linhas com um
+     esmaecido no rodapé e abre inteiro no "Ver mais" (botão criado pelo JS só
+     onde o texto realmente não cabe). */
   #tech-scroll .tech-label-text {
     line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
     overflow: hidden;
+    transition: max-height .45s cubic-bezier(.22, .61, .36, 1);
+  }
+
+  #tech-scroll .tech-label-text.is-clamped {
+    max-height: 3em;
+    -webkit-mask-image: linear-gradient(180deg, #000 55%, rgba(0, 0, 0, .12) 100%);
+    mask-image: linear-gradient(180deg, #000 55%, rgba(0, 0, 0, .12) 100%);
+  }
+
+  #tech-scroll .tech-label-more {
+    margin-top: .35rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: var(--text-caption);
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #9a6638;
+    cursor: pointer;
+    text-underline-offset: .25em;
+    text-decoration: underline;
+  }
+
+  #tech-scroll .tech-label-more[hidden] {
+    display: none;
   }
 }
 
-/* Viewports baixos (fora do breakpoint mobile): o bloco de legendas é centralizado
-   e pode ultrapassar o rodapé da seção — como o texto é branco e a seção seguinte
-   (#texturas) é branca, ele sumiria no vazio. Aperta o bloco para caber. */
-/* Aperto progressivo: comprime espaçamentos sem cortar texto. */
-@media (min-width:769px) and (max-height:760px) {
-  #tech-scroll .tech-labels {
-    gap: .5rem;
-  }
-
-  #tech-scroll [data-tech-label] {
-    padding-top: .625rem;
-  }
-
-  #tech-scroll .tech-label-head {
-    margin-bottom: .25rem;
-  }
-
-  #tech-scroll .tech-label-text {
-    line-height: 1.45;
-  }
-}
-
-/* Viewport muito baixo: aí sim limita as linhas, como já é feito no mobile. */
-@media (min-width:769px) and (max-height:620px) {
-  #tech-scroll .tech-label-text {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-}
-
-/* ── Telas de alta resolução (≥1920px / 2K / 4K) ──
-   Antes, o palco 3D ficava preso à esquerda e as legendas à direita,
-   abrindo um vazio enorme no meio em monitores largos. Aqui os dois
-   blocos são ancorados ao CENTRO da tela com um vão fixo entre eles,
-   e crescem um pouco para ocupar melhor o espaço. O cabeçalho é
-   limitado à mesma largura do container para alinhar com o conteúdo. */
+/* ── telas largas: o diagrama respira, sem esticar a coluna de texto ── */
 @media (min-width:1920px) {
-  #tech-scroll .tech-head {
-    width: 100%;
-    max-width: var(--container);
-    margin: 0 auto;
-    padding-left: 0;
-    padding-right: 0;
+  #tech-scroll .proc-inner {
+    padding: 0;
   }
 
-  /* palco: borda direita encosta a 3.5rem do centro */
-  #tech-scroll .tech-stage {
-    left: auto;
-    right: calc(50% + 3.5rem);
-    --pw: min(36vw, 640px);
+  #tech-scroll .proc-stage {
+    --pw: min(28vw, 520px);
   }
 
-  /* legendas: começam a 3.5rem do centro, espelhando o palco */
-  #tech-scroll .tech-labels {
-    right: auto;
-    left: calc(50% + 3.5rem);
-    width: min(26vw, 460px);
-    gap: clamp(1.25rem, 3vh, 2.5rem);
+  #tech-scroll .proc-lens {
+    width: 200px;
   }
 }
 

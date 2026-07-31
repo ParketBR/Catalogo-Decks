@@ -26,7 +26,7 @@
     }
   </script>
   <link rel="stylesheet" href="catalogo.css?v=5">
-  <link rel="stylesheet" href="index.css?v=47">
+  <link rel="stylesheet" href="index.css?v=52">
 </head>
 
 <body class="antialiased selection:bg-white selection:text-black">
@@ -169,63 +169,187 @@
 
   <!-- ─── PRODUCT SECTIONS (injected) ─── -->
   <main id="products" class="relative z-10 bg-black"></main>
-  <!-- ═══ 02 TECNOLOGIA · animação de camadas por scroll ═══ -->
-  <section data-screen-label="Tecnologia animada" id="tech-scroll">
-    <div class="tech-sticky">
-      <div class="tech-head">
-        <div>
 
-          <h2 class="tech-title">Você chamaria isso simplesmente de <span class="tech-accent">deck de madeira</span>?
-          </h2>
-        </div>
-        <span class="tech-hint">Continue rolando ↓</span>
-      </div>
-      <div class="tech-body">
-        <!-- palco 3D — uma única peça, não uma pilha que se abre.
-             Ao rolar, a mesma tábua engrossa (as paredes celulares terminam o
-             processo ~50% mais espessas) e vai ficando mais escura e mais
-             texturada, como no diagrama de referência do processo. -->
-        <div class="tech-stage" data-tech-stage>
-          <div class="tech-stack">
-            <div class="tech-plank">
-              <div class="tp-face tp-top"></div>
-              <div class="tp-face tp-bottom"></div>
-              <div class="tp-face tp-front"></div>
-              <div class="tp-face tp-back"></div>
-              <div class="tp-face tp-left"></div>
-              <div class="tp-face tp-right"></div>
+  <!-- ─── PROCESSO · três tábuas isométricas, textura fotográfica real ───
+       Nenhum veio é desenhado: as faces das tábuas e o interior das lentes
+       recebem a foto de madeira do projeto (tecnologia/madeira-01.webp e
+       madeira-03.webp) mapeada em geometria 3D real (6 faces, preserve-3d).
+       A mesma peça aparece nas três etapas, na mesma perspectiva — só muda a
+       colorimetria (impregnação → cura) e a espessura da parede celular. -->
+  <section data-screen-label="Processo" id="tech-scroll" aria-label="Processo de modificação da madeira">
+    <div class="proc-inner">
+
+      <header class="proc-head">
+        <span class="proc-eyebrow">Tecnologia</span>
+        <h2 class="tech-title">Você chamaria isso simplesmente de <span class="tech-accent">deck de madeira</span>?
+        </h2>
+        <p class="proc-sub">A mesma peça em três momentos do processo — do poro aberto à parede celular cerca de 50%
+          mais espessa.</p>
+      </header>
+
+      <div class="proc-diagram">
+        <span class="proc-blob" aria-hidden="true"></span>
+
+        <!-- ── ETAPA 1 · madeira antes da impregnação ── -->
+        <div class="proc-row proc-row--natural">
+          <div class="proc-stage">
+            <div class="proc-plank">
+              <span class="pf pf-top"></span>
+              <span class="pf pf-front"></span>
+              <span class="pf pf-right"></span>
             </div>
+            <span class="proc-shadow" aria-hidden="true"></span>
           </div>
-          <div class="tech-plank-shadow" data-plank-shadow></div>
-        </div>
-        <!-- legendas sequenciais -->
-        <div class="tech-labels">
-          <div data-tech-label="0">
-            <div class="tech-label-head"><span class="tech-label-num">01</span>
-              <h3 class="tech-label-name">Impregnação</h3>
+
+          <svg class="proc-link" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path d="M0 50 L118 14" />
+            <path d="M0 50 L118 86" />
+          </svg>
+
+          <figure class="proc-zoom">
+            <figcaption class="proc-zoom-cap">Células da madeira antes da impregnação.</figcaption>
+            <div class="proc-lens">
+              <span class="proc-lens-mat" aria-hidden="true"></span>
+              <svg class="proc-cells" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+                <defs>
+                  <path id="hx-01" d="M9 0 4.5 7.79 -4.5 7.79 -9 0 -4.5 -7.79 4.5 -7.79Z" />
+                  <pattern id="cel-01" width="27" height="15.588" patternUnits="userSpaceOnUse">
+                    <use href="#hx-01" x="6.75" y="0" />
+                    <use href="#hx-01" x="6.75" y="15.588" />
+                    <use href="#hx-01" x="33.75" y="0" />
+                    <use href="#hx-01" x="33.75" y="15.588" />
+                    <use href="#hx-01" x="20.25" y="7.794" />
+                    <use href="#hx-01" x="-6.75" y="7.794" />
+                  </pattern>
+                </defs>
+                <circle cx="60" cy="60" r="60" fill="url(#cel-01)" />
+              </svg>
             </div>
+          </figure>
+        </div>
+
+        <!-- ── PASSO 01 · impregnação ── -->
+        <div class="proc-step">
+          <span class="proc-step-num" aria-hidden="true">1</span>
+          <div class="proc-step-copy" data-tech-label="0">
+            <h3 class="tech-label-name">Impregnação</h3>
             <p class="tech-label-text">Antes, as células da madeira estão vazias. A peça recebe álcool furfurílico — um
               líquido de origem biológica — que penetra e preenche essas células em toda a espessura da tábua.</p>
           </div>
-          <div data-tech-label="1">
-            <div class="tech-label-head"><span class="tech-label-num">02</span>
-              <h3 class="tech-label-name">Cura e secagem</h3>
+          <span class="proc-step-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" focusable="false">
+              <path d="M24 6c6.5 8 11 13.6 11 19a11 11 0 0 1-22 0c0-5.4 4.5-11 11-19Z" />
+              <path d="M24 21c-3 2.4-4.5 5-4.5 7.8" />
+            </svg>
+          </span>
+        </div>
+
+        <!-- ── ETAPA 2 · madeira impregnada ── -->
+        <div class="proc-row proc-row--impregnada">
+          <div class="proc-stage">
+            <div class="proc-plank">
+              <span class="pf pf-top"></span>
+              <span class="pf pf-front"></span>
+              <span class="pf pf-right"></span>
             </div>
+            <span class="proc-shadow" aria-hidden="true"></span>
+          </div>
+
+          <svg class="proc-link" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path d="M0 50 L118 14" />
+            <path d="M0 50 L118 86" />
+          </svg>
+
+          <figure class="proc-zoom">
+            <figcaption class="proc-zoom-cap">Células impregnadas pelo líquido.</figcaption>
+            <div class="proc-lens">
+              <span class="proc-lens-mat" aria-hidden="true"></span>
+              <svg class="proc-cells" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+                <defs>
+                  <path id="hx-02" d="M9 0 4.5 7.79 -4.5 7.79 -9 0 -4.5 -7.79 4.5 -7.79Z" />
+                  <pattern id="cel-02" width="27" height="15.588" patternUnits="userSpaceOnUse">
+                    <use href="#hx-02" x="6.75" y="0" />
+                    <use href="#hx-02" x="6.75" y="15.588" />
+                    <use href="#hx-02" x="33.75" y="0" />
+                    <use href="#hx-02" x="33.75" y="15.588" />
+                    <use href="#hx-02" x="20.25" y="7.794" />
+                    <use href="#hx-02" x="-6.75" y="7.794" />
+                  </pattern>
+                </defs>
+                <circle cx="60" cy="60" r="60" fill="url(#cel-02)" />
+              </svg>
+            </div>
+          </figure>
+        </div>
+
+        <!-- ── PASSO 02 · cura e secagem ── -->
+        <div class="proc-step">
+          <span class="proc-step-num" aria-hidden="true">2</span>
+          <div class="proc-step-copy" data-tech-label="1">
+            <h3 class="tech-label-name">Cura e secagem</h3>
             <p class="tech-label-text">A madeira é aquecida e seca. O líquido reage dentro da peça e endurece ali,
               preenchendo e fortalecendo a estrutura das fibras. Não é verniz nem camada de superfície: acontece
               dentro da madeira.</p>
           </div>
-          <div data-tech-label="2">
-            <div class="tech-label-head">
-              <h3 class="tech-label-name">O Resultado</h3>
+          <span class="proc-step-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" focusable="false">
+              <path d="M27 27.4V11a3.5 3.5 0 0 0-7 0v16.4a7 7 0 1 0 7 0Z" />
+              <path d="M23.5 33.5V17" />
+              <path d="M33 12.5c1.6 1.6 1.6 3.4 0 5s-1.6 3.4 0 5" />
+            </svg>
+          </span>
+        </div>
+
+        <!-- ── ETAPA 3 · madeira após cura e secagem ── -->
+        <div class="proc-row proc-row--curada">
+          <div class="proc-stage">
+            <div class="proc-plank">
+              <span class="pf pf-top"></span>
+              <span class="pf pf-front"></span>
+              <span class="pf pf-right"></span>
             </div>
+            <span class="proc-shadow" aria-hidden="true"></span>
+          </div>
+
+          <svg class="proc-link" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path d="M0 50 L118 14" />
+            <path d="M0 50 L118 86" />
+          </svg>
+
+          <figure class="proc-zoom">
+            <figcaption class="proc-zoom-cap">Células após a modificação: cerca de 50% mais espessas.</figcaption>
+            <div class="proc-lens">
+              <span class="proc-lens-mat" aria-hidden="true"></span>
+              <svg class="proc-cells" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+                <defs>
+                  <path id="hx-03" d="M9 0 4.5 7.79 -4.5 7.79 -9 0 -4.5 -7.79 4.5 -7.79Z" />
+                  <pattern id="cel-03" width="27" height="15.588" patternUnits="userSpaceOnUse">
+                    <use href="#hx-03" x="6.75" y="0" />
+                    <use href="#hx-03" x="6.75" y="15.588" />
+                    <use href="#hx-03" x="33.75" y="0" />
+                    <use href="#hx-03" x="33.75" y="15.588" />
+                    <use href="#hx-03" x="20.25" y="7.794" />
+                    <use href="#hx-03" x="-6.75" y="7.794" />
+                  </pattern>
+                </defs>
+                <circle cx="60" cy="60" r="60" fill="url(#cel-03)" />
+              </svg>
+            </div>
+          </figure>
+        </div>
+
+        <!-- ── resultado ── -->
+        <div class="proc-step proc-step--final">
+          <span class="proc-step-num proc-step-num--final" aria-hidden="true"></span>
+          <div class="proc-step-copy" data-tech-label="2">
+            <h3 class="tech-label-name">O resultado</h3>
             <p class="tech-label-text">As células terminam cerca de 50% mais espessas: madeira mais resistente, mais
               estável e mais durável. Exposta ao sol e à chuva, evolui para a pátina prateada — muda de cor, não de
               desempenho.</p>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </section>
 
@@ -669,8 +793,8 @@
     window.PARKET_FILTER = 'decks';
     document.getElementById('footer-year').textContent = new Date().getFullYear();
   </script>
-  <script defer src="index.js?v=11"></script>
-  <script defer src="catalogo.js?v=11"></script>
+  <script defer src="index.js?v=16"></script>
+  <script defer src="catalogo.js?v=12"></script>
 </body>
 
 </html>

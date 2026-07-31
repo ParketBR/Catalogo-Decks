@@ -177,6 +177,9 @@
           title: 'Decks',
           desc: 'O exterior elevado. Resistência e beleza natural para transformar terraços em refúgios atemporais.',
           cover: 'decks/image.webp',
+          videos: [
+            { type: 'youtube', id: 'C8vWmyMeP4M', vertical: true }
+          ],
           collections: [
             {
               key: 'brazil', title: 'Brazil',

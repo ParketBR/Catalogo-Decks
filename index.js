@@ -4,7 +4,7 @@
    1. Hero split — imagem desliza para o lado, título sobe (dirigido por scroll)
    2. Reveal on scroll — fades escopados ao #sobre
    3. Logo escuro sobre seções claras
-   4. 02 Tecnologia (#tech-scroll) — camadas 3D dirigidas por scroll
+   4. 02 Tecnologia (#tech-scroll) — diagrama do processo em três etapas
    5. Madeiras — regua 3D interativa
    ═══════════════════════════════════════════════════════════════ */
 
@@ -48,7 +48,7 @@
 (function(){
   const logo = document.querySelector('.topbar-logo');
   if (!logo) return;
-  const light = [...document.querySelectorAll('#sobre, .texturas-scroll, #madeiras-tipos')];
+  const light = [...document.querySelectorAll('#sobre, .texturas-scroll, #madeiras-tipos, #tech-scroll')];
   if (!light.length) return;
 
   const activeSet = new Set();
@@ -80,54 +80,96 @@
   });
 })();
 
-/* Tecnologia — a peça engrossa e escurece conforme o scroll (seção #tech-scroll).
-   Não há pilha que se abre: é uma tábua só, do começo ao fim do processo. */
+/* Processo (#tech-scroll) — reveal sequencial das etapas do diagrama.
+   A tábua não é mais dirigida por scroll: cada peça é um render fixo da mesma
+   foto de madeira, e o scroll só traz a linha para dentro da tela. */
 (function(){
   const sec = document.getElementById('tech-scroll');
   if (!sec) return;
-  const stage = sec.querySelector('[data-tech-stage]');
-  const shadow = sec.querySelector('[data-plank-shadow]');
-  const labels = Array.from(sec.querySelectorAll('[data-tech-label]'));
-  const clamp = (v) => Math.max(0, Math.min(1, v));
+  const itens = Array.from(sec.querySelectorAll('.proc-row, .proc-step'));
+  if (!itens.length) return;
 
-  let ticking = false;
-  const update = () => {
-    ticking = false;
-    const r = sec.getBoundingClientRect();
-    const total = sec.offsetHeight - window.innerHeight;
-    if (total <= 0) return;
-    const p = clamp(-r.top / total);
-    const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-    if (stage) {
-      // ~50% mais espessa no fim do processo, como as paredes celulares
-      const base = window.innerWidth <= 768 ? 11 : 18;
-      stage.style.setProperty('--esp', (base * (1 + eased * 0.5)).toFixed(2) + 'px');
-      stage.style.setProperty('--cura', eased.toFixed(3));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+
+  itens.forEach(el => io.observe(el));
+})();
+
+/* Tecnologia no mobile — texto de cada etapa em colapso.
+   Antes o texto era cortado com line-clamp (reticências) e o resto ficava
+   inacessível. Agora ele fica recolhido em duas linhas e abre no "Ver mais".
+   O botão só é criado onde o texto de fato não cabe, e é removido no desktop. */
+(function(){
+  const sec = document.getElementById('tech-scroll');
+  if (!sec) return;
+  const mq = window.matchMedia('(max-width: 768px)');
+  const blocos = Array.from(sec.querySelectorAll('[data-tech-label]'));
+  let timer = 0;
+
+  const alternar = (p, bt) => {
+    const fechado = p.classList.contains('is-clamped');
+    if (fechado) {
+      // altura explícita: max-height não transiciona a partir de 'none'
+      p.style.maxHeight = p.scrollHeight + 'px';
+      p.classList.remove('is-clamped');
+      bt.textContent = 'Ver menos';
+      bt.setAttribute('aria-expanded', 'true');
+    } else {
+      p.style.maxHeight = '';
+      p.classList.add('is-clamped');
+      bt.textContent = 'Ver mais';
+      bt.setAttribute('aria-expanded', 'false');
     }
-    if (shadow) {
-      shadow.style.transform = `scale(${(1 + eased * 0.12).toFixed(3)})`;
-      shadow.style.opacity = (0.55 + eased * 0.2).toFixed(2);
-    }
-    const step = 0.85 / (labels.length + 1);
-    labels.forEach((el, i) => {
-      const on = p > step * (i + 1);
-      el.style.opacity = on ? '1' : '0';
-      el.style.transform = on ? 'none' : 'translateY(14px)';
+  };
+
+  const montar = () => {
+    blocos.forEach((bloco) => {
+      const p = bloco.querySelector('.tech-label-text');
+      if (!p) return;
+      let bt = bloco.querySelector('.tech-label-more');
+
+      if (!mq.matches) {
+        if (bt) bt.remove();
+        p.classList.remove('is-clamped');
+        p.style.maxHeight = '';
+        return;
+      }
+
+      if (!bt) {
+        bt = document.createElement('button');
+        bt.type = 'button';
+        bt.className = 'tech-label-more';
+        bt.textContent = 'Ver mais';
+        bt.setAttribute('aria-expanded', 'false');
+        bt.addEventListener('click', () => alternar(p, bt));
+        bloco.appendChild(bt);
+      }
+
+      // mede solto para saber se o texto passa de duas linhas
+      p.classList.remove('is-clamped');
+      p.style.maxHeight = '';
+      const linha = parseFloat(getComputedStyle(p).lineHeight) || 20;
+      const cabe = p.scrollHeight <= linha * 2 + 2;
+      bt.hidden = cabe;
+      if (!cabe) {
+        p.classList.add('is-clamped');
+        bt.textContent = 'Ver mais';
+        bt.setAttribute('aria-expanded', 'false');
+      }
     });
   };
 
-  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
-  const io = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
-      update();
-    } else {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    }
-  }, { rootMargin: '100px 0px' });
-  io.observe(sec);
+  montar();
+  mq.addEventListener('change', montar);
+  window.addEventListener('resize', () => {
+    clearTimeout(timer);
+    timer = setTimeout(montar, 200);
+  }, { passive: true });
 })();
 
 /* Madeiras — regua 3D fechada, giravel com o mouse/toque (seção #madeiras-tipos) */
@@ -194,4 +236,3 @@
 
   render();
 })();
-
