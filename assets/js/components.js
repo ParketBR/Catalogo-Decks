@@ -33,6 +33,7 @@ const PARKET_PAGES = [
   { cat: 'Decks', name: 'EuroDeck', url: 'decks-eurodeck.html', tags: 'deck eurodeck carvalho europeu pinho' },
   { cat: 'Decks', name: 'Kebony', url: 'decks-kebony.html', tags: 'deck kebony clear character noruega' },
   { cat: 'Decks', name: 'Únicos', url: 'decks-unicos.html', tags: 'deck unicos únicos exóticas raras' },
+  { cat: 'Decks', name: 'Hotel Fasano Trancoso', url: 'index.html#colecao-decks-fasano-trancoso', tags: 'deck cumaru fasano trancoso bahia hotel piscina solario solário obra projeto' },
   { cat: 'Pisos › Carvalhos', name: 'Carvalho Europeu Naturalle', url: 'pisos-carvalhos.html', tags: 'carvalho europeu naturalle' },
   { cat: 'Pisos › Carvalhos', name: 'Carvalho Europeu Mont Blanc', url: 'pisos-carvalhos.html', tags: 'carvalho europeu mont blanc' },
   { cat: 'Pisos › Carvalhos', name: 'Carvalho Europeu Smoke', url: 'pisos-carvalhos.html', tags: 'carvalho europeu smoke' },

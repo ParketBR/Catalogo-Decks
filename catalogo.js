@@ -251,6 +251,23 @@
                 { src: "https://parket.com.br/wp-content/uploads/2025/10/PRO_DE_UN-01.jpg", name: "Deck de Momoki" },
                 { src: "https://parket.com.br/wp-content/uploads/2025/10/PRO_DE_UN-02.jpg", name: "Peroba Demolição" }
               ]
+            },
+            {
+              key: 'fasano-trancoso', title: 'Hotel Fasano Trancoso',
+              desc: 'Deck de Cumaru em escala hoteleira, na Bahia. Piscinas, solários e passarelas integrados à mata nativa e à orla — madeira exposta ao sol, à maresia e ao uso intenso, mantendo conforto térmico ao pisar descalço.',
+              specs: [
+                { label: 'Espécie', value: 'Cumaru' },
+                { label: 'Local', value: 'Trancoso · Bahia' },
+                { label: 'Aplicação', value: 'Piscinas, solários e passarelas' },
+                { label: 'Fotografia', value: 'Daniel Pinheiro' },
+              ],
+              // Fotos locais, na pasta enviada pelo cliente. Os nomes têm espaço
+              // e acento — daí o percent-encoding no src.
+              images: [
+                { src: "Hotel%20Fasando%20Tranocoso/Hotel-Fasano-Trancoso_Piscina_Cred-Daniel-Pinheiro-1-2.jpeg", name: "Deck de Cumaru · piscina principal" },
+                { src: "Hotel%20Fasando%20Tranocoso/4526619.jpeg", name: "Deck de Cumaru · solário sobre o mar" },
+                { src: "Hotel%20Fasando%20Tranocoso/Foto-1-Hotel-Fasano-Trancoso_Wellness-Pool_Cr%C3%A9dito-Daniel-Pinheiro.jpeg", name: "Deck de Cumaru · wellness pool" }
+              ]
             }
           ]
         },
@@ -667,7 +684,7 @@
           : '';
       }
 
-      function buildCollectionsIndex(product) {
+      function buildCollectionsIndex(product, kicker = 'coleções') {
         const wrap = document.createElement('div');
         wrap.className = 'collections-index';
         const items = product.collections.map((c, i) => `
@@ -678,7 +695,7 @@
         wrap.innerHTML = `
           ${ciBgLayer(product)}
           <div class="ci-inner">
-            <span class="eyebrow block mb-8 fade-up">${product.title} · coleções</span>
+            <span class="eyebrow block mb-8 fade-up">${product.title} · ${kicker}</span>
             <h3 class="display-title text-[clamp(1.4rem,2.6vw,2.2rem)] mb-12 text-white/70 fade-up" style="transition-delay: 0.05s">
               Escolha ${CHOOSE_PHRASE[product.key] || 'um produto'}:
             </h3>
@@ -929,7 +946,7 @@
         if (product.collections && product.collections.length) {
           productSection.appendChild(buildProductCover(product));
           // Índice numerado de coleções ("Escolha um deck:") — hero da categoria única.
-          
+          if (SINGLE_CATEGORY) productSection.appendChild(buildCollectionsIndex(product, 'modelos'));
           product.collections.forEach((col, ci) => {
             productSection.appendChild(buildCollection(product, col, ci));
           });
@@ -1190,10 +1207,20 @@
         // As linhas de deck, ordenadas pela luminância da textura (clara → escura).
         // [arquivo em texturas/, nome da linha, descrição]
         // Kebony ainda não entra: falta a textura da espécie (texturas/kebony.jpg).
+        // No lugar da linha "Brazil" entram as espécies nativas, uma a uma.
+        // Faltam as texturas de Tatajuba, Sucupira Negra, Louro Pardo e Pau Mulato:
+        // basta colocar texturas/<slug>.jpg e descomentar a linha correspondente.
         const ESPECIES = [
-          ['carvalho-europeu', 'Eurodeck', 'Engenharia de precisão com peças longas e uniformes. Uma seleção premium que alia simetria impecável e refinamento absoluto para o seu deck.'],
           ['teca', 'Únicos', 'Projetos exclusivos e customizados que desafiam os padrões convencionais. Decks sob medida para arquiteturas singulares que pedem soluções fora do comum.'],
-          ['cumaru', 'Brazil', 'Nossa homenagem às raízes tropicais. A Coleção Brazil traz o calor e a beleza duradoura da madeira nativa brasileira para áreas externas.'],
+          // ['louro-pardo', 'Louro Pardo', 'Tom claro amarelado e veios discretos, traz leveza às áreas externas.'],
+          // ['tatajuba', 'Tatajuba', 'Amarelo dourado que oxida para um mel profundo, de fibras firmes e uniformes.'],
+          // ['pau-mulato', 'Pau Mulato', 'Rosado claro de textura fina e desenho homogêneo, de aspecto sedoso.'],
+          ['peroba-do-campo', 'Peroba do Campo', 'Bege acinzentado de veios calmos, madeira tradicional de grande durabilidade.'],
+          ['itauba', 'Itaúba', 'Marrom esverdeado e densa, resiste com naturalidade ao sol e à chuva.'],
+          ['cumaru', 'Cumaru', 'Castanho avermelhado de alta densidade, referência em decks pela dureza e estabilidade.'],
+          ['ipe-tabaco', 'Ipê', 'Marrom oliva profundo, uma das madeiras mais duras e duráveis para áreas externas.'],
+          // ['sucupira-negra', 'Sucupira Negra', 'Marrom escuro quase preto, de veios finos e presença marcante.'],
+          ['eurodeck', 'Eurodeck', 'Engenharia de precisão com peças longas e uniformes. Uma seleção premium que alia simetria impecável e refinamento absoluto para o seu deck.'],
         ];
         const n = ESPECIES.length;
         const pad = (v) => String(v).padStart(2, '0');

@@ -8,7 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="preload" as="image" href="autoload/Hero.webp" fetchpriority="high">
+  <link rel="preload" as="image"
+    href="https://images.weserv.nl/?url=parket.com.br%2Fwp-content%2Fuploads%2F2025%2F10%2FPRO_DE_BR-06.jpg&amp;output=webp&amp;q=80&amp;w=2000"
+    fetchpriority="high">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_back,arrow_upward,chevron_left,chevron_right,close,search&display=swap" rel="stylesheet">
   <script src="assets/js/components.js?v=2"></script>
@@ -26,7 +28,7 @@
     }
   </script>
   <link rel="stylesheet" href="catalogo.css?v=5">
-  <link rel="stylesheet" href="index.css?v=52">
+  <link rel="stylesheet" href="index.css?v=53">
 </head>
 
 <body class="antialiased selection:bg-white selection:text-black">
@@ -55,7 +57,9 @@
   <!-- ─── HERO · imagem full-bleed que desliza para o lado revelando o título ─── -->
   <section id="hero-viewport" class="hero-split">
     <div id="hero-sticky">
-      <div id="hero-bg" class="hero-media" style="background-image: url('autoload/Hero.webp');"></div>
+      <div id="hero-bg" class="hero-media"
+        style="background-image: url('https://images.weserv.nl/?url=parket.com.br%2Fwp-content%2Fuploads%2F2025%2F10%2FPRO_DE_BR-06.jpg&amp;output=webp&amp;q=80&amp;w=2000');">
+      </div>
       <span class="hero-wordmark" aria-hidden="true">deck</span>
       <div id="hero-content" class="hero-copy">
         <span class="hero-eyebrow">Coleção 2026</span>
@@ -353,7 +357,7 @@
     </div>
   </section>
 
-  <!-- ─── MADEIRAS · natural vs modificada (régua 3D fechada e girável) ─── -->
+  <!-- ─── MADEIRAS · natural vs tratada (régua 3D fechada e girável) ─── -->
   <section id="madeiras-tipos" data-screen-label="Tipos de deck">
     <div class="mtipos-inner">
       <!-- topo: título + intro à esquerda, régua 3D à direita -->
@@ -361,8 +365,8 @@
         <div class="mtipos-copy">
           <header class="mtipos-head fade-up">
             <span class="mtipos-eyebrow">Sobre as madeiras</span>
-            <h2 class="mtipos-title">Madeira natural ou madeira modificada?
-              <span class="mtipos-sub">Entenda as diferenças</span>
+            <h2 class="mtipos-title">O deck em madeira nobre
+              <span class="mtipos-sub">O que está por trás de cada régua</span>
             </h2>
           </header>
 
@@ -372,8 +376,8 @@
             <p class="fade-up" style="transition-delay:.06s">Além da beleza e da sensação de aconchego que a madeira
               proporciona, o deck é um elemento técnico exposto ao tempo. Características como estabilidade dimensional,
               resistência à umidade e ao apodrecimento e desempenho ao longo dos anos fazem toda a diferença.</p>
-            <p class="mtipos-lead fade-up" style="transition-delay:.12s">A principal comparação é entre a madeira natural
-              e a madeira modificada.</p>
+            <p class="mtipos-lead fade-up" style="transition-delay:.12s">Cada régua é selecionada, usinada e instalada
+              sob medida para a obra.</p>
           </div>
         </div>
 
@@ -475,74 +479,36 @@
         </div>
       </div>
 
-      <div class="mtipos-cards">
+      <div class="mtipos-atributos">
 
-  <!-- Madeira Natural -->
-  <article class="mtipos-card fade-up visible">
+        <article class="mtipos-atr fade-up">
+          <span class="mtipos-atr-num">01</span>
+          <h3 class="mtipos-atr-title">Sob medida</h3>
+          <p>Largura da régua, vão entre peças e estrutura de barrotes são definidos a partir do projeto, com
+            precisão milimétrica e fixação limpa entre as peças.</p>
+        </article>
 
-    <span class="mtipos-badge">Madeira Maciça</span>
+        <article class="mtipos-atr fade-up" style="transition-delay:.08s">
+          <span class="mtipos-atr-num">02</span>
+          <h3 class="mtipos-atr-title">Madeira nobre à vista</h3>
+          <p>O veio, o tom e o desenho vêm da própria árvore. Nenhuma régua é igual à outra, e o conjunto ganha
+            unidade na seleção das peças.</p>
+        </article>
 
-    <h3 class="mtipos-card-title">Madeira Natural</h3>
+        <article class="mtipos-atr fade-up" style="transition-delay:.16s">
+          <span class="mtipos-atr-num">03</span>
+          <h3 class="mtipos-atr-title">Peça exposta ao tempo</h3>
+          <p>O deck é elemento técnico da construção: espécie, tratamento em toda a espessura e drenagem são
+            definidos ainda no projeto, para resistir à chuva, ao sol e ao uso intenso.</p>
+        </article>
 
-    <p class="mtipos-intro">
-      Produzido a partir de uma única peça de madeira, preservando toda a
-      autenticidade e a beleza natural da matéria-prima.
-    </p>
+      </div>
 
-    <div class="mtipos-divider"></div>
-
-    <h4>Características</h4>
-
-    <ul class="mtipos-list">
-      <li>Peça única de madeira maciça</li>
-      <li>Visual totalmente natural</li>
-      <li>Movimentação natural da madeira</li>
-      <li>Pode apresentar fendas e empenamentos</li>
-      <li>Pede manutenção periódica para conservar a cor</li>
-    </ul>
-
-    <div class="mtipos-footer">
-      <h4>Ideal para</h4>
-      <p>Projetos que valorizam a autenticidade da madeira maciça.</p>
-    </div>
-
-  </article>
-
-  <!-- Madeira Modificada -->
-  <article class="mtipos-card mtipos-card--eng fade-up visible" style="transition-delay:.08s">
-
-    <span class="mtipos-badge">Alta Estabilidade</span>
-
-    <h3 class="mtipos-card-title">Madeira Modificada</h3>
-
-    <p class="mtipos-intro">
-      Madeira tratada em profundidade para resistir ao tempo aberto,
-      mantendo toda a beleza e a textura da madeira natural.
-    </p>
-
-    <div class="mtipos-divider"></div>
-
-    <h4>Vantagens</h4>
-
-    <ul class="mtipos-list">
-      <li>100% madeira natural</li>
-      <li>Modificação em toda a espessura</li>
-      <li>Maior estabilidade dimensional</li>
-      <li>Resistência às variações climáticas</li>
-      <li>Alta resistência ao apodrecimento</li>
-      <li>Evolui para a pátina prateada</li>
-    </ul>
-
-    <div class="mtipos-footer">
-      <h4g>Ideal para</h4>
-      <p>Áreas externas, molhadas e de uso intenso, que exigem máxima estabilidade.</p>
-    </div>
-
-  </article>
-
-</div>
-      <p class="mtipos-outro fade-up">O resultado é um deck que mantém a elegância da madeira natural, mas com desempenho
-        superior, oferecendo mais segurança e estabilidade ao longo dos anos.</p>
+      <!-- Fecho da seção, em bloco destacado -->
+      <div class="mtipos-fecho fade-up">
+        <p class="mtipos-outro">O resultado é um deck que atravessa o tempo aberto sem perder a elegância: estável
+          sob os pés, firme na chuva e bonito de perto, régua a régua.</p>
+      </div>
 
       <!-- Bloco final: como a madeira reage -->
       <div class="mtipos-react">
@@ -559,7 +525,7 @@
             um desafio em um deck, exposto o tempo todo ao sol, à chuva e às variações de temperatura, além do
             contato frequente com a água.</p>
           <p class="fade-up" style="transition-delay:.12s">Felizmente, a pesquisa e o desenvolvimento trouxeram soluções
-            para esse comportamento natural. Com a madeira modificada, a beleza da madeira e a estabilidade
+            para esse comportamento natural. Com a madeira tratada, a beleza da madeira e a estabilidade
             finalmente podem coexistir em perfeita harmonia.</p>
         </div>
       </div>
@@ -716,7 +682,7 @@
                 <p>Por isso o assentamento prevê frestas entre as réguas, para drenagem e ventilação, e a estrutura
                   precisa ficar afastada do solo, com ar circulando por baixo. Água parada sob o deck é o que mais
                   encurta a vida da madeira.</p>
-                <p>A madeira modificada tolera bem essas condições: por se movimentar menos que a madeira de origem,
+                <p>A madeira tratada tolera bem essas condições: por se movimentar menos que a madeira de origem,
                   mantém a integridade mesmo em área molhada e de uso intenso.</p>
               </div>
             </div>
@@ -763,6 +729,7 @@
               <li><a href="#colecao-decks-eurodeck">Eurodeck</a></li>
               <li><a href="#colecao-decks-kebony">Kebony</a></li>
               <li><a href="#colecao-decks-unicos">Únicos</a></li>
+              <li><a href="#colecao-decks-fasano-trancoso">Hotel Fasano Trancoso</a></li>
 
             </ul>
           </div>
@@ -794,7 +761,7 @@
     document.getElementById('footer-year').textContent = new Date().getFullYear();
   </script>
   <script defer src="index.js?v=16"></script>
-  <script defer src="catalogo.js?v=12"></script>
+  <script defer src="catalogo.js?v=13"></script>
 </body>
 
 </html>
